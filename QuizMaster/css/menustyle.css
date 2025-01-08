@@ -1,0 +1,71 @@
+/* Common styles */
+body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    margin: 0;
+    padding: 1rem;
+    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    min-height: 100vh;
+    color: #2d3748;
+}
+
+/* Scores page specific styles */
+.scores-container {
+    max-width: 800px;
+    margin: 2rem auto;
+}
+
+.scores-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.scores-table th,
+.scores-table td {
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border: 1px solid #e2e8f0;
+}
+
+.scores-table th {
+    background: #4299e1;
+    color: white;
+    font-weight: 500;
+}
+
+/* Menu page specific styles */
+.menu-container {
+    max-width: 320px;
+    margin: 2rem auto;
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.menu-button {
+    display: block;
+    width: 100%;
+    background: #4299e1;
+    color: white;
+    padding: 0.75rem;
+    margin: 0.75rem 0;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.menu-button:hover {
+    transform: translateY(-2px);
+    background: #3182ce;
+}
+
+h1 {
+    color: #2c5282;
+    text-align: center;
+    margin-bottom: 2rem;
+}
