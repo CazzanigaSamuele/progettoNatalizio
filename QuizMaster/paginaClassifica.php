@@ -8,26 +8,34 @@
         exit();
     }
 
-
 // Leggi il file CSV
 $file = 'csv/punteggi.csv'; 
 $dati = [];
 
-if (($contenuto = fopen($file, 'r')) !== false) {
-    while (($colonne = fgetcsv($contenuto, 1000, ';')) !== false) {
-        $dati[] = [
-            'utente' => $colonne[0],
-            'quiz' => $colonne[1],
-            'difficolta' => $colonne[2],
-            'percentuale' => (int) $colonne[3]
-        ];
+if (file_exists($file)) {
+    $contenuto = file_get_contents($file);
+    $righe = explode("\n", $contenuto); // Dividi il contenuto in righe
+
+    foreach ($righe as $riga) {
+        if (!empty(trim($riga))) { // Salta righe vuote
+            $colonne = explode(';', $riga); // Analizza la riga usando ";" come delimitatore
+            $dati[] = [
+                'utente' => $colonne[0],
+                'quiz' => $colonne[1],
+                'difficolta' => $colonne[2],
+                'percentuale' => (int) $colonne[3]
+            ];
+        }
     }
-    fclose($contenuto);
 }
 
 // Estrai i nomi dei quiz senza duplicati
-$listaQuiz = array_unique(array_column($dati, 'quiz'));
-sort($listaQuiz);
+$listaQuiz = [];
+foreach ($dati as $dato) {
+    if (!in_array($dato['quiz'], $listaQuiz)) {
+        $listaQuiz[] = $dato['quiz'];
+    }
+}
 
 // Ottieni il quiz selezionato dall'utente
 $quizSelezionato = $_GET['quiz'] ?? null;
@@ -43,11 +51,20 @@ if ($quizSelezionato) {
             }
         }
     }
-    // Ordina per percentuale decrescente
-    usort($datiFiltrati, function ($a, $b) { //a = primo parametro; b = secondo parametro 
-        return $b['percentuale'] - $a['percentuale']; //in base al risultato se è positivo o negativo ci sono 2 casi
-        //b maggiore di a quindi b prima ; a maggiore di b quindi a prima
-    });
+    // Ordina manualmente per percentuale decrescente
+    $ordinato = [];
+    while (!empty($datiFiltrati)) {
+        $massimo = null;
+        foreach ($datiFiltrati as $chiave => $valore) {
+            if ($massimo === null || $valore['percentuale'] > $massimo['percentuale']) {
+                $massimo = $valore;
+                $indiceMassimo = $chiave;
+            }
+        }
+        $ordinato[] = $massimo;
+        unset($datiFiltrati[$indiceMassimo]);
+    }
+    $datiFiltrati = $ordinato;
 }
 ?>
 
@@ -68,7 +85,7 @@ if ($quizSelezionato) {
         <select name="quiz" id="quiz" onchange="this.form.submit()">
             <option value="">-- Seleziona un quiz --</option>
             <?php foreach ($listaQuiz as $quiz): ?>
-                <option value="<?php echo $quiz; ?>" <?php echo $quizSelezionato === $quiz; ?>>
+                <option value="<?php echo $quiz; ?>" <?php echo $quizSelezionato === $quiz ? 'selected' : ''; ?>>
                     <?php echo $quiz; ?>
                 </option>
             <?php endforeach; ?>
@@ -88,7 +105,7 @@ if ($quizSelezionato) {
             <tbody>
                 <?php foreach ($datiFiltrati as $index => $dato): ?>
                     <tr>
-                        <td><?php echo "n°" . $index + 1; ?></td>
+                        <td><?php echo "n°" . ($index + 1); ?></td>
                         <td><?php echo $dato['utente']; ?></td>
                         <td><?php echo $dato['difficolta']; ?></td>
                         <td><?php echo $dato['percentuale']; ?>%</td>
