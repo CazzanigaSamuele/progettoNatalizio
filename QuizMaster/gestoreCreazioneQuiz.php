@@ -8,7 +8,7 @@ if (!isset($_SESSION)) {
 if (isset($_GET['numDomande'])) { // Verifica se il parametro 'numDomande' è stato passato nella richiesta GET
     $q = new CatalogoQuiz(); // Istanzia un oggetto CatalogoQuiz
 
-    $numDomande = (int)$_GET['numDomande']; // Convertire il numero di domande in un intero
+    $numDomande = (int) $_GET['numDomande']; // Convertire il numero di domande in un intero
     $nomeQuiz = $_GET["nomeQuiz"];
     $_SESSION['nQuiz'] = $nomeQuiz; // Estrae il nome del quiz
     $difficoltaQuiz = $_GET["livelloDifficolta"]; // Estrae la difficoltà del quiz
@@ -25,7 +25,7 @@ if (isset($_GET['numDomande'])) { // Verifica se il parametro 'numDomande' è st
         $domanda = $_GET["domanda$i"]; // Estrae la domanda $i
         $opzioni = []; // Array per contenere le opzioni della domanda
 
-        $nuovaRiga .= $nomeQuiz; 
+        $nuovaRiga .= $nomeQuiz;
         $nuovaRiga .= ";" . $difficoltaQuiz;
         $nuovaRiga .= ";" . $domanda;
 
@@ -47,6 +47,17 @@ if (isset($_GET['numDomande'])) { // Verifica se il parametro 'numDomande' è st
             }
         }
 
+        for ($i = 0; $i < count($opzioni); $i++) {
+            for ($j = $i + 1; $j < count($opzioni); $j++) {
+                if ($opzioni[$i] == $opzioni[$j]) {
+                    // Reindirizza in caso di duplicati
+                    header('Location: paginaCreazioneQuizUtente.php?' . '&messaggio=Nelle risposte non sono ammessi duplicati!!!');
+                    exit;
+                }
+            }
+        }
+        
+
         if ($flag == false) {
             // Redirect con messaggio di errore se l'opzione corretta non è presente
             header('Location: paginaCreazioneQuizUtente.php?' . '&messaggio=Opzione corretta deve essere presente nelle opzioni!!!');
@@ -65,4 +76,3 @@ if (isset($_GET['numDomande'])) { // Verifica se il parametro 'numDomande' è st
     header('Location: paginaCreazioneQuizUtente.php?' . '&messaggio=quiz creato correttamente!');
 }
 ?>
-
